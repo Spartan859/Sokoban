@@ -7,16 +7,17 @@ from SokobanDialogs import save_scene, import_scene, prompt_resize_board, prompt
 from SokobanView import draw_tile, draw_board
 
 class SokobanGUI:
-    def __init__(self, master: tk.Tk, initial_map: List[str]) -> None:
+    def __init__(self, master: tk.Tk, initial_map: List[str], debug: bool = False) -> None:
         self.master = master
         master.title("Sokoban Solver")
         # 内部地图与求解器
         self.initial_map = initial_map
         self.current_map = [list(row) for row in initial_map]
-        self.solver = SokobanSolver(initial_map)
+        self.solver = SokobanSolver(initial_map, debug=debug)
         self.rows = len(initial_map)
         self.cols = len(initial_map[0])
         self.tile_size = 40
+        self.debug = debug
 
         # 求解/播放状态
         self.solution_steps = []
@@ -203,7 +204,7 @@ class SokobanGUI:
         # 写入并刷新
         self.current_map[r][c] = new_ch
         self.initial_map = ["".join(row) for row in self.current_map]
-        self.solver = SokobanSolver(self.initial_map)
+        self.solver = SokobanSolver(self.initial_map, debug=self.debug)
         self.reset_game()
 
     # 已移除工具栏选择逻辑，编辑通过点击格子弹出选择菜单完成。

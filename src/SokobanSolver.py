@@ -14,13 +14,14 @@ class SokobanSolver:
     BOX_ON_TARGET = '!'
     PLAYER_ON_TARGET = '+'
 
-    def __init__(self, board_map):
+    def __init__(self, board_map, debug=False):
         self.board_map = board_map
         self.rows = len(board_map)
         self.cols = len(board_map[0])
         self.targets = self._find_elements(self.TARGET)
         self.targets.update(self._find_elements(self.PLAYER_ON_TARGET))
         self.targets.update(self._find_elements(self.BOX_ON_TARGET))
+        self.debug = debug
 
     def _find_elements(self, symbol):
         positions = set()
@@ -110,12 +111,18 @@ class SokobanSolver:
         visited = {start_state: 0}
         parent_map = {}  # state -> (parent_state, move)
         goal_state = None
+        step = 0
         while priority_queue:
             f_score, g_score, current_state, parent_state, move = heapq.heappop(priority_queue)
             if parent_state is not None:
                 parent_map[current_state] = (parent_state, move)
+            if self.debug:
+                player, boxes = current_state
+                print(f"[A* Step {step}] f={f_score}, g={g_score}, player={player}, boxes={sorted(boxes)}, move={move}")
             if self._is_goal(current_state):
                 goal_state = current_state
+                if self.debug:
+                    print(f"[A*] Goal reached at step {step}!")
                 break
             for next_state, next_move in self._get_next_states(current_state):
                 new_g_score = g_score + 1
@@ -124,7 +131,10 @@ class SokobanSolver:
                     h_score = self._heuristic(next_state)
                     f_score = new_g_score + h_score
                     heapq.heappush(priority_queue, (f_score, new_g_score, next_state, current_state, next_move))
+            step += 1
         if goal_state is None:
+            if self.debug:
+                print("[A*] No solution found.")
             return None
         # 回溯路径
         path = []
@@ -134,4 +144,6 @@ class SokobanSolver:
             path.append(move)
             state = parent
         path.reverse()
+        if self.debug:
+            print(f"[A*] Solution found. Steps: {len(path)}. Path: {''.join(path)}")
         return path

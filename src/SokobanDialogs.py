@@ -37,7 +37,7 @@ def import_scene(gui: SokobanGUIProtocol) -> None:
         gui.current_map = [list(row) for row in gui.initial_map]
         gui.rows = len(gui.initial_map)
         gui.cols = len(gui.initial_map[0])
-        gui.solver = SokobanSolver(gui.initial_map)
+        gui.solver = SokobanSolver(gui.initial_map, debug=getattr(gui, 'debug', False))
         gui.canvas.config(width=gui.cols * gui.tile_size, height=gui.rows * gui.tile_size)
         gui.reset_game()
         gui.status_label.config(text="状态: 等待求解")
@@ -92,7 +92,7 @@ def prompt_resize_board(gui: SokobanGUIProtocol) -> None:
         gui.current_map = [list(row) for row in new_map]
         gui.rows = new_rows
         gui.cols = new_cols
-        gui.solver = SokobanSolver(gui.initial_map)
+        gui.solver = SokobanSolver(gui.initial_map, debug=getattr(gui, 'debug', False))
         gui.canvas.config(width=gui.cols * gui.tile_size, height=gui.rows * gui.tile_size)
         gui.reset_game()
         dlg.destroy()
@@ -220,7 +220,7 @@ def prompt_random_map(gui: SokobanGUIProtocol) -> None:
 
         gui.initial_map = new_map
         gui.current_map = [list(row) for row in new_map]
-        gui.solver = SokobanSolver(gui.initial_map)
+        gui.solver = SokobanSolver(gui.initial_map, debug=getattr(gui, 'debug', False))
         gui.reset_game()
         dlg.destroy()
 
