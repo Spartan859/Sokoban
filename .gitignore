@@ -40,3 +40,5 @@ dist/
 
 # Notebook检查点
 .ipynb_checkpoints/
+
+*.zip
